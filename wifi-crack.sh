@@ -14,6 +14,7 @@ INTERFACE_MAC=""
 INTERNET=""
 INTERNET_MAC=""
 
+mkdir -p "$CONFIG_DIR" 
 
 #### Temporário
 echo 'DATA="$(date +%Y%m%d-%H%M%S)"
@@ -30,7 +31,8 @@ CURRENT_ATTACK_FILE="$CONFIG_DIR/current_attack_file"
 #### Fim Temporário
 
 source "$CONFIG_FILE"
-mkdir -p "$CONFIG_DIR" "$CONFIG_ATTACK_DIR" "$AIRCRACK_FILE_DIR"
+mkdir -p "$CONFIG_ATTACK_DIR" "$AIRCRACK_FILE_DIR"
+
 touch "$CONFIG_INTERFACE"
 source "$CONFIG_INTERFACE"
 
