@@ -1,4 +1,3 @@
-# wifi-crack
 <h1>wifi-crack</h1>
 wifi-crack é uma ferramenta para facilitar na quebra de senhas wifi.
 
