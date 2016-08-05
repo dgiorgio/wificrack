@@ -1,32 +1,24 @@
 #!/bin/bash
 
 PWD="$(pwd)"
-source "$PWD/wifi-crack.conf"
-#### VARIAVEIS UTILIZADAS
-# DATA
-# DIR_CONFIG_USER
-# INTERFACE
-# INTERFACE_MAC
-# INTERFACE_INTERNET
-# VITIMA
-# CHANNEL
-# BSSID
-# STATION
-# DHCP_RANGE
-# DHCP_SERVER
-# DHCP_RANGE_START
-# DHCP_RANGE_END
+CONFIG_DIR="$HOME/.wifi-crack"
+CONFIG_FILE="$CONFIG_DIR/config"
+source "$CONFIG_FILE"
+
+source "$CONFIG_INTERFACE"
+source "$CURRENT_ATTACK_FILE"
+source "$CONFIG_ATTACK"
 
 
 CAP_SELECT() {
-ls -1 "$DIR_CONFIG_USER"/*.cap
+ls -1 "$AIRCRACK_FILE_DIR"/*.cap
 echo -n "
 Escolha um arquivo .cap e aperte <Enter>: "
 read CAP_FILE
 }
 until [ -e "$CAP_FILE" ] ; do
-    echo "Arquivo não existe!
-    "
+    echo "Nenhum arquivo .cap foi selecionado, ou o arquivo não existe!"
+    echo ""
     CAP_SELECT
 done
 

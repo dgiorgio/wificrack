@@ -1,0 +1,9 @@
+DATA="$(date +%Y%m%d-%H%M%S)"
+#TERMINAL="xterm -bg black -cr white -fg white -e bash -c"
+TERMINAL="gnome-terminal -x bash -c"
+EDITOR="nano"
+CONFIG_DIR="$HOME/.wifi-crack" #diretorio de configuração
+CONFIG_ATTACK_DIR="$CONFIG_DIR/attack" #diretorio com as configurações do alvo para ataque
+AIRCRACK_FILE_DIR="$CONFIG_DIR/aircrack" #diretorio com os arquivos dump capturados com o aircrack
+CONFIG_FILE="$CONFIG_DIR/config" #arquivo com as configurações globais
+CONFIG_INTERFACE="$CONFIG_DIR/interface.conf" #arquivo de configuração das interfaces

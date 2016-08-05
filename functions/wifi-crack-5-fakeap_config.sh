@@ -1,5 +1,12 @@
 #!/bin/bash
 
+PWD="$(pwd)"
+CONFIG_DIR="$HOME/.wifi-crack"
+CONFIG_FILE="$CONFIG_DIR/config"
+source "$CONFIG_FILE"
+
+source "$CONFIG_INTERFACE"
+
 # Interface wireless utilizada
 INTERFACE=wlan0
 INTERFACE_INTERNET=eth0

@@ -1,12 +1,13 @@
 #!/bin/bash
 
 PWD="$(pwd)"
-source "$PWD/wifi-crack.conf"
-#### VARIAVEIS UTILIZADAS
-# DIR_CONFIG_USER
+CONFIG_DIR="$HOME/.wifi-crack"
+CONFIG_FILE="$CONFIG_DIR/config"
+source "$CONFIG_FILE"
+
 
 CAP_SELECT() {
-ls -1 "$DIR_CONFIG_USER"/*.cap
+ls -1 "$AIRCRACK_FILE_DIR"/*.cap
 echo -n "
 Escolha um arquivo .cap e aperte <Enter>: "
 read CAP_FILE

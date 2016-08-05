@@ -1,7 +1,14 @@
 #!/bin/bash
 
 PWD="$(pwd)"
-source "$PWD/wifi-crack.conf"
+CONFIG_DIR="$HOME/.wifi-crack"
+CONFIG_FILE="$CONFIG_DIR/config"
+source "$CONFIG_FILE"
+
+source "$CONFIG_INTERFACE"
+source "$CURRENT_ATTACK_FILE"
+source "$CONFIG_ATTACK"
+
 #### VARIAVEIS UTILIZADAS
 # DATA
 # DIR_CONFIG_USER

@@ -1,9 +1,11 @@
 #!/bin/bash
 
 PWD="$(pwd)"
-source "$PWD/wifi-crack.conf"
-#### VARIAVEIS UTILIZADAS
-# INTERFACE
+CONFIG_DIR="$HOME/.wifi-crack"
+CONFIG_FILE="$CONFIG_DIR/config"
+source "$CONFIG_FILE"
+
+source "$CONFIG_INTERFACE"
 
 ifconfig $INTERFACE down
 macchanger -p $INTERFACE
