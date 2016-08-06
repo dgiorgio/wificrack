@@ -5,3 +5,6 @@ wifi-crack é uma ferramenta para facilitar na quebra de senhas wifi.
 O wifi-crack foi testado na distribuição <a href="https://www.kali.org/">Kali Linux</a>.
 
 A ferramenta ainda não detecta dependencias, e pode não funcionar corretamente em outras distribuições.
+
+<h2>Dependencias adicionais</h2>
+dnsmasq
