@@ -6,5 +6,5 @@ O wifi-crack foi testado na distribuição <a href="https://www.kali.org/">Kali 
 
 A ferramenta ainda não detecta dependencias, e pode não funcionar corretamente em outras distribuições.
 
-<h2>Dependencias adicionais</h2>
+<h3>Dependencias adicionais</h3>
 dnsmasq
