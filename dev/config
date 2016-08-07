@@ -3,7 +3,14 @@ DATA="$(date +%Y%m%d-%H%M%S)"
 TERMINAL="gnome-terminal -x bash -c"
 EDITOR="nano"
 CONFIG_DIR="$HOME/.wifi-crack" #diretorio de configuração
+
+# FAKEAP VARIAVEIS
+CONFIG_FAKEAP_DIR="$CONFIG_DIR/fakeap" #diretorio com as configurações do fakeap
+CONFIG_FAKEAP_FILE_DHCP="${CONFIG_FAKEAP_DIR}/dhcp.conf"
+CONFIG_FAKEAP_FILE_WIRELESS="${CONFIG_FAKEAP_DIR}/wireless.conf"
+
 CONFIG_ATTACK_DIR="$CONFIG_DIR/attack" #diretorio com as configurações do alvo para ataque
 AIRCRACK_FILE_DIR="$CONFIG_DIR/aircrack" #diretorio com os arquivos dump capturados com o aircrack
-CONFIG_FILE="$CONFIG_DIR/config" #arquivo com as configurações globais
+CONFIG_FILE="$CONFIG_DIR/config.conf" #arquivo com as configurações globais
 CONFIG_INTERFACE="$CONFIG_DIR/interface.conf" #arquivo de configuração das interfaces
+CURRENT_ATTACK_FILE="$CONFIG_DIR/current_attack_file.conf"

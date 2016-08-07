@@ -7,7 +7,7 @@ SCRIPTPATH="$(dirname ${SCRIPT})"
 FUNCTIONPATH="${SCRIPTPATH}/functions"
 OPTION=""
 CONFIG_DIR="$HOME/.wifi-crack"
-CONFIG_FILE="$CONFIG_DIR/config"
+CONFIG_FILE="$CONFIG_DIR/config.conf"
 ### INTERFACES
 INTERFACE=""
 INTERFACE_MAC=""
@@ -22,19 +22,30 @@ echo 'DATA="$(date +%Y%m%d-%H%M%S)"
 TERMINAL="gnome-terminal -x bash -c"
 EDITOR="nano"
 CONFIG_DIR="$HOME/.wifi-crack" #diretorio de configuração
+
+# FAKEAP VARIAVEIS
+CONFIG_FAKEAP_DIR="$CONFIG_DIR/fakeap" #diretorio com as configurações do fakeap
+CONFIG_FAKEAP_FILE_DHCP="${CONFIG_FAKEAP_DIR}/dhcp.conf"
+CONFIG_FAKEAP_FILE_WIRELESS="${CONFIG_FAKEAP_DIR}/wireless.conf"
+CONFIG_FAKEAP_FILE_DNSMASQ="${CONFIG_FAKEAP_DIR}/dnsmasq-wifi-crack.conf"
+CONFIG_FAKEAP_FILE_FAKEDNS="${CONFIG_FAKEAP_DIR}/fakedns.conf"
+#CONFIG_FAKEAP_DIR_DNSMASQ_LOG="${CONFIG_FAKEAP_DIR}/log"
+
 CONFIG_ATTACK_DIR="$CONFIG_DIR/attack" #diretorio com as configurações do alvo para ataque
 AIRCRACK_FILE_DIR="$CONFIG_DIR/aircrack" #diretorio com os arquivos dump capturados com o aircrack
-CONFIG_FILE="$CONFIG_DIR/config" #arquivo com as configurações globais
-CONFIG_INTERFACE="$CONFIG_DIR/interface" #arquivo de configuração das interfaces
-CURRENT_ATTACK_FILE="$CONFIG_DIR/current_attack_file"
+CONFIG_FILE="$CONFIG_DIR/config.conf" #arquivo com as configurações globais
+CONFIG_INTERFACE="$CONFIG_DIR/interface.conf" #arquivo de configuração das interfaces
+CURRENT_ATTACK_FILE="$CONFIG_DIR/current_attack_file.conf"
 ' > "$CONFIG_FILE"
 #### Fim Temporário
 
 source "$CONFIG_FILE"
-mkdir -p "$CONFIG_ATTACK_DIR" "$AIRCRACK_FILE_DIR"
+mkdir -p "$CONFIG_ATTACK_DIR" "$CONFIG_FAKEAP_DIR" "$AIRCRACK_FILE_DIR"
 
 touch "$CONFIG_INTERFACE"
 source "$CONFIG_INTERFACE"
+
+touch "${CONFIG_FAKEAP_FILE_FAKEDNS}"
 
 ################# FUNÇÕES #################
 INFORMATION() {
@@ -94,18 +105,20 @@ FAKEAP() {
     while : ; do
         INFORMATION
         echo -n "
-        1 - FakeAP - Criar um AP falso [dnsmasq REQUIRED]
-        2 - Configuration - Configurações necessárias para criar um AP falso
-        3 - Instalar o dnsmasq
+        1 - Start FakeAP 
+        2 - Enable internet connect [dnsmasq REQUIRED]
+        98 - Install dnsmasq
+        99 - Configuration - required to create a fake AP
         0 - Sair
         
         Escolha uma das opções: "
         read FAKEAP_OPTION
         
         case "$FAKEAP_OPTION" in
-        1) "${FUNCTIONPATH}"/wifi-crack-5-fakeap.sh ;;
-        2) "${FUNCTIONPATH}"/wifi-crack-5-fakeap_config.sh ;;
-        3) apt-get install -y dnsmasq ;;
+        1) $TERMINAL "bash -xv \"${FUNCTIONPATH}\"/wifi-crack-5-fakeap_start.sh ; bash" ;;
+        2) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-5-fakeap_enable_internet.sh ; bash" ;;
+        98) apt-get install -y dnsmasq ;;
+        99) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-5-fakeap_config.sh" ;;
         0) break ;;
         *) echo "INVALID OPTION!!!" ;;
         esac
