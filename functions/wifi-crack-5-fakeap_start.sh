@@ -50,8 +50,8 @@ iptables -t nat -A POSTROUTING -o "$INTERNET" -j MASQUERADE
 
 #enable ip forward
 echo 1 > /proc/sys/net/ipv4/ip_forward
-
-iptables –t nat –A PREROUTING –p tcp –destination-port 80 –j REDIRECT –to-port 10000
+#redirect port 80 -> 10000
+#iptables –t nat –A PREROUTING –p tcp –destination-port 80 –j REDIRECT –to-port 10000
 
 #ifconfig at0 192.168.1.1 netmask 255.255.255.0
 #ifconfig at0 mtu 1400
