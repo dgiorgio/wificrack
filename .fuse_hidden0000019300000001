@@ -141,6 +141,8 @@ FAKEAP() {
         INFORMATION
         echo -n "
         1 - Start FakeAP 
+        2 - Enable internet connect [dnsmasq REQUIRED]
+        98 - Install dnsmasq
         99 - Configuration - required to create a fake AP
         0 - Sair
         
@@ -149,6 +151,8 @@ FAKEAP() {
         
         case "$FAKEAP_OPTION" in
         1) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-5-fakeap_start.sh ; bash" & ;;
+        2) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-5-fakeap_enable_internet.sh ; bash" & ;;
+        98) apt-get install -y dnsmasq ;;
         99) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-5-fakeap_config.sh" & ;;
         0) break ;;
         *) echo "INVALID OPTION!!!" ;;
