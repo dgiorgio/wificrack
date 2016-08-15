@@ -1,11 +1,12 @@
 #!/bin/bash
 
+# Create VAR to start
+OPTION=""
+
 ################# VARIAVEIS #################
 PWD="$(pwd)"
-SCRIPT="$(readlink -f $0)"
-SCRIPTPATH="$(dirname ${SCRIPT})"
+SCRIPTPATH="$(dirname $0)"
 FUNCTIONPATH="${SCRIPTPATH}/functions"
-OPTION=""
 CONFIG_DIR="$HOME/.wifi-crack"
 CONFIG_FILE="$CONFIG_DIR/config.conf"
 ### INTERFACES
@@ -16,11 +17,45 @@ INTERNET_MAC=""
 
 mkdir -p "$CONFIG_DIR" 
 
-#### Temporário
-echo 'DATA="$(date +%Y%m%d-%H%M%S)"
-#TERMINAL="xterm -bg black -cr white -fg white -e bash -c"
-TERMINAL="gnome-terminal -x bash -c"
-EDITOR="nano"
+# Select terminal
+LIST_TERMINAL="gnome-terminal xfce4-terminal xterm konsole"
+for SELECT_TERMINAL in ${LIST_TERMINAL}
+do
+    PATH_TERMINAL="$(which ${SELECT_TERMINAL} 2>/dev/null)"
+    if [ -x "${PATH_TERMINAL}" ]; then
+        break
+    fi
+done
+
+case "${SELECT_TERMINAL}" in
+    konsole) TERMINAL="${PATH_TERMINAL} -e bash -c" ;;
+    gnome-terminal) TERMINAL="${PATH_TERMINAL} -x bash -c" ;;
+    xfce4-terminal) TERMINAL="${PATH_TERMINAL} -x bash -c" ;;
+    xterm) TERMINAL="${PATH_TERMINAL} -bg black -cr white -fg white -e bash -c" ;;
+esac
+
+echo "# Terminal sample
+#TERMINAL=\"xterm -bg black -cr white -fg white -e bash -c\"
+#TERMINAL=\"konsole -e bash -c\"
+#TERMINAL=\"gnome-terminal -x bash -c\"
+TERMINAL=\"${TERMINAL}\"
+" > "$CONFIG_FILE"
+
+# Select editor
+if [ ! -x "${EDITOR}" ]; then
+    for EDITOR in $(echo nano ee vim vi)
+    do
+        EDITOR="$(which ${EDITOR} 2>/dev/null)"
+        if [ -x "${EDITOR}" ]; then
+            EDITOR="${EDITOR}"
+            echo "EDITOR=\"${EDITOR}\"" >> "$CONFIG_FILE"
+            break
+        fi
+    done
+fi
+
+echo '
+DATA="$(date +%Y%m%d-%H%M%S)"
 CONFIG_DIR="$HOME/.wifi-crack" #diretorio de configuração
 
 # FAKEAP VARIAVEIS
@@ -36,7 +71,7 @@ AIRCRACK_FILE_DIR="$CONFIG_DIR/aircrack" #diretorio com os arquivos dump captura
 CONFIG_FILE="$CONFIG_DIR/config.conf" #arquivo com as configurações globais
 CONFIG_INTERFACE="$CONFIG_DIR/interface.conf" #arquivo de configuração das interfaces
 CURRENT_ATTACK_FILE="$CONFIG_DIR/current_attack_file.conf"
-' > "$CONFIG_FILE"
+' >> "$CONFIG_FILE"
 #### Fim Temporário
 
 source "$CONFIG_FILE"
@@ -93,8 +128,8 @@ DUMP() {
         read DUMP_OPTION
         
         case "$DUMP_OPTION" in
-        1) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-3-dump.sh ; bash" ;;
-        2) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-3-dump_scan.sh ; bash" ;;
+        1) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-3-dump.sh ; bash" & ;;
+        2) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-3-dump_scan.sh ; bash" & ;;
         0) break ;;
         *) echo "INVALID OPTION!!!" ;;
         esac
@@ -115,10 +150,10 @@ FAKEAP() {
         read FAKEAP_OPTION
         
         case "$FAKEAP_OPTION" in
-        1) $TERMINAL "bash -xv \"${FUNCTIONPATH}\"/wifi-crack-5-fakeap_start.sh ; bash" ;;
-        2) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-5-fakeap_enable_internet.sh ; bash" ;;
+        1) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-5-fakeap_start.sh ; bash" & ;;
+        2) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-5-fakeap_enable_internet.sh ; bash" & ;;
         98) apt-get install -y dnsmasq ;;
-        99) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-5-fakeap_config.sh" ;;
+        99) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-5-fakeap_config.sh" & ;;
         0) break ;;
         *) echo "INVALID OPTION!!!" ;;
         esac
@@ -138,9 +173,9 @@ WEP() {
         read WEP_OPTION
         
         case "$WEP_OPTION" in
-        1) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-6-wep_attack.sh ; bash" ;;
-        2) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-6-fakeauth.sh ; bash" ;;
-        3) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-6-arp_request.sh ; bash" ;;
+        1) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-6-wep_attack.sh ; bash" & ;;
+        2) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-6-fakeauth.sh ; bash" & ;;
+        3) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-6-arp_request.sh ; bash" & ;;
         0) break ;;
         *) echo "INVALID OPTION!!!" ;;
         esac
@@ -159,8 +194,8 @@ WPAWPA2_WPS() {
         read WPAWPA2_WPS_OPTION
         
         case "$WPAWPA2_WPS_OPTION" in
-        1) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-9-wps_scan.sh ; bash" ;;
-        2) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-9-wps_brute_force.sh ; bash" ;;
+        1) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-9-wps_scan.sh ; bash" & ;;
+        2) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-9-wps_brute_force.sh ; bash" & ;;
         0) break ;;
         *) echo "INVALID OPTION!!!" ;;
         esac
@@ -179,8 +214,8 @@ WPAWPA2_ATTACK() {
         read WPAWPA2_ATTACK_OPTION
         
         case "$WPAWPA2_ATTACK_OPTION" in
-        1) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-10-handshake_deauth.sh" ;;
-        2) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-10-wordlist_attack.sh ; bash" ;;
+        1) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-10-handshake_deauth.sh" & ;;
+        2) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-10-wordlist_attack.sh ; bash" & ;;
         0) break ;;
         *) echo "INVALID OPTION!!!" ;;
         esac
@@ -274,13 +309,13 @@ CONFIG_ATTACK_MENU() {
         2)
             if [ -e "$CONFIG_ATTACK" ]; then
                 source "$CONFIG_ATTACK"
-                $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-98-config_attack_menu.sh \"$CONFIG_ATTACK\""
+                $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-98-config_attack_menu.sh \"$CONFIG_ATTACK\"" &
                 source "$CONFIG_ATTACK"
             else
                 echo "Selecione um arquivo!!!"
             fi
             ;;
-        3) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-98-config_attack_menu.sh" ;;
+        3) $TERMINAL "\"${FUNCTIONPATH}/wifi-crack-98-config_attack_menu.sh\"" & ;;
         0) break ;;
         *) echo "INVALID OPTION!!!" ;;
         esac
@@ -313,7 +348,7 @@ MENU() {
         2 - Sniff - Escanear as redes wifi
         3 - Dump - Verificar conexões da rede alvo
         4 - Death - DEAUTH na rede alvo
-        5 - FakeAP - Criar um AP falso [DESENVOLVIMENTO]
+        5 - FakeAP - Criar um AP falso
         6 - WEP - Attack
         7 - WEP - Chopchop [DESENVOLVIMENTO]
         8 - WEP - Fragmentation Attack [DESENVOLVIMENTO]
@@ -329,9 +364,9 @@ MENU() {
         
         case "$OPTION" in
         1) MONITOR ;;
-        2) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-2-sniff.sh ; bash" ;;
+        2) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-2-sniff.sh ; bash" & ;;
         3) DUMP ;;
-        4) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-4-deauth.sh" ;;
+        4) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-4-deauth.sh" & ;;
         5) FAKEAP ;;
         6) WEP ;;
         7)  ;;

@@ -1,8 +1,7 @@
 #!/bin/bash
 
 PWD="$(pwd)"
-SCRIPT="$(readlink -f $0)"
-SCRIPTPATH="$(dirname ${SCRIPT})"
+SCRIPTPATH="$(dirname $0)"
 FUNCTIONPATH="${SCRIPTPATH}"
 CONFIG_DIR="$HOME/.wifi-crack"
 CONFIG_FILE="$CONFIG_DIR/config.conf"

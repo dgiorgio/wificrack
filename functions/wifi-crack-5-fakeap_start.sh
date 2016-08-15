@@ -9,20 +9,39 @@ source "$CONFIG_INTERFACE"
 source "${CONFIG_FAKEAP_FILE_DHCP}"
 source "${CONFIG_FAKEAP_FILE_WIRELESS}"
 
+touch "${CONFIG_FAKEAP_FILE_FAKEDNS}"
 
-#edit dhcp configuration
+#edit dnsmasq configuration
 echo -e "
 no-resolv
 no-poll
 interface=at0
+bind-interfaces
 dhcp-range=$DHCP_RANGE_START,$DHCP_RANGE_END,12h
 dhcp-option=3,$DHCP_SERVER
 dhcp-option=6,$DHCP_SERVER
 server=8.8.8.8
 addn-hosts=\"${CONFIG_FAKEAP_FILE_FAKEDNS}\"
+dhcp-leasefile=/var/lib/misc/dnsmasq.leases
 log-queries
 log-dhcp
 " > "${CONFIG_FAKEAP_FILE_DNSMASQ}"
+
+
+#edit dhcpd configuration
+#echo -e "
+#Authoritative;
+#Default-lease-time 600;
+#Max-lease-time 7200;
+#Subnet 192.168.100.0 netmask $DHCP_NETMASK {
+#Option routers $DHCP_SERVER;
+#Option subnet-mask $DHCP_NETMASK;
+#Option domain-name “$FAKEAP_SSID”;
+#Option domain-name-servers $DHCP_SERVER;
+#Range $DHCP_RANGE_START $DHCP_RANGE_END;
+#}
+#" #> "${CONFIG_FAKEAP_FILE_DNSMASQ}"
+#awk -F"." '{print $1"."$2"."$3"."1}'
 
 #start fake ap
 if [ -n "${FAKEAP_MAC}" ]; then
@@ -32,11 +51,11 @@ else
     $TERMINAL "airbase-ng -e $FAKEAP_SSID -c $FAKEAP_CHANNEL $INTERFACE" &
 fi
 #ex: airbase-ng -e fake-ap -c 6 mon0
-sleep 2
+sleep 4
 
 
 #IPTABLES
-ifconfig at0 "${DHCP_SERVER}/24" up
+ifconfig at0 "${DHCP_SERVER}" netmask "${DHCP_NETMASK}" up
 #removing iptables rules
 iptables --flush
 iptables --table nat --flush
@@ -66,5 +85,5 @@ echo 1 > /proc/sys/net/ipv4/ip_forward
 
 #start dnsmasq
 #/etc/init.d/dnsmasq restart
-dnsmasq -C "${CONFIG_FAKEAP_FILE_DNSMASQ}" -d
-# dnsmasq -C "${CONFIG_FAKEAP_FILE_DNSMASQ}" -H ${CONFIG_FAKEAP_FILE_FAKEDNS} -d
+#dnsmasq -C "${CONFIG_FAKEAP_FILE_DNSMASQ}" -d
+dnsmasq -C "${CONFIG_FAKEAP_FILE_DNSMASQ}" -H "${CONFIG_FAKEAP_FILE_FAKEDNS}" -d
