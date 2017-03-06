@@ -9,6 +9,7 @@ CONFIG_ATTACK="$1"
 
 if [ -e "$CONFIG_ATTACK" ]; then
     source "$CONFIG_ATTACK"
+    source "$CONFIG_OTHERSETTINGS_DIR/config_dhcpserver_default.conf"
 fi
 
 SELECT_ESSID="$ESSID"
@@ -60,18 +61,35 @@ while : ; do
     fi
     
     echo -ne "
-        1 - ESSID DA REDE ALVO: \033[1;32m$SELECT_ESSID\033[0m \033[1;31m$SELECT_ESSID_STATUS\033[0m
+        1 - Set DHCP server default: \033[1;32m$DHCPSERVER_DEFAULT\033[0m
         2 - CHANNEL DA REDE ALVO: \033[1;32m$SELECT_CHANNEL\033[0m \033[1;31m$SELECT_CHANNEL_STATUS\033[0m
         3 - BSSID DA REDE ALVO: \033[1;32m$SELECT_BSSID\033[0m \033[1;31m$SELECT_BSSID_STATUS\033[0m
         4 - STATION DA REDE ALVO: \033[1;32m$SELECT_STATION\033[0m \033[1;31m$SELECT_STATION_STATUS\033[0m
         99 - Salvar $SELECT_SAVE_FILE
         0 - Sair
         
-        Escolha uma das opções: "
+        Choose one of the options: "
     read OPTION
     
     case "$OPTION" in
-    1) echo -n "Digite o nome da rede alvo: " ; read SELECT_ESSID ;;
+    1) echo -ne "
+        1 - dnsmasq
+        2 - isc-dhcp-server
+        0 - Exit
+        
+        Choose one of the options: "
+        read OPTION
+        
+        case "$OPTION" in
+        1) echo "DHCPSERVER_DEFAULT=dnsmasq" > "$CONFIG_OTHERSETTINGS_DIR/config_dhcpserver_default.conf" && DHCPSERVER_DEFAULT="dnsmasq" ;;
+        2) echo "DHCPSERVER_DEFAULT=isc-dhcp-server" > "$CONFIG_OTHERSETTINGS_DIR/config_dhcpserver_default.conf" && DHCPSERVER_DEFAULT="isc-dhcp-server" ;;
+        0) ;;
+        *) echo "INVALID OPTION!!!" ;;
+        esac
+        
+    echo -n "Digite o nome da rede alvo: " ; read SELECT_ESSID ;;
+    
+    
     2) echo -n "Digite o channel da rede alvo: " ; read SELECT_CHANNEL ;;
     3) echo -n "Digite o BSSID da rede alvo: " ; read SELECT_BSSID ;;
     4) echo -n "Digite uma station da rede alvo: " ; read SELECT_STATION ;;
