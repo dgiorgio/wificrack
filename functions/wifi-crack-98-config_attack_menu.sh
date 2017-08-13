@@ -64,6 +64,7 @@ while : ; do
         2 - CHANNEL DA REDE ALVO: \033[1;32m$SELECT_CHANNEL\033[0m \033[1;31m$SELECT_CHANNEL_STATUS\033[0m
         3 - BSSID DA REDE ALVO: \033[1;32m$SELECT_BSSID\033[0m \033[1;31m$SELECT_BSSID_STATUS\033[0m
         4 - STATION DA REDE ALVO: \033[1;32m$SELECT_STATION\033[0m \033[1;31m$SELECT_STATION_STATUS\033[0m
+        98 - Start Scan Wifi
         99 - Salvar $SELECT_SAVE_FILE
         0 - Sair
         
@@ -75,8 +76,8 @@ while : ; do
     2) echo -n "Digite o channel da rede alvo: " ; read SELECT_CHANNEL ;;
     3) echo -n "Digite o BSSID da rede alvo: " ; read SELECT_BSSID ;;
     4) echo -n "Digite uma station da rede alvo: " ; read SELECT_STATION ;;
-    99) SAVE && SELECT_SAVE_FILE=" [Ultimo arquivo salvo em \033[1;32m${CONFIG_ATTACK}\033[0m]"
-    ;;
+    98) $TERMINAL "\"${FUNCTIONPATH}\"/wifi-crack-3-dump_scan.sh ; bash" ;;
+    99) SAVE && SELECT_SAVE_FILE=" [Ultimo arquivo salvo em \033[1;32m${CONFIG_ATTACK}\033[0m]" ;;
     0) break ;;
     *) echo "INVALID OPTION!!!"
     esac
