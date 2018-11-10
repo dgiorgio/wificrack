@@ -22,8 +22,8 @@ INFORMATION() {
     if [ -n "$INTERFACE" ]; then
         INTERFACE_MAC="$(cat /sys/class/net/$INTERFACE/address)"
     fi
-    
-    INTERFACE_MODE="$(cat /sys/class/net/$INTERFACE/type)" 
+
+    INTERFACE_MODE="$(cat /sys/class/net/$INTERFACE/type)"
     if [ "$INTERFACE_MODE" == "1" ]; then
         INTERFACE_MODE_STATUS="[MODE MANAGED]"
     elif [ "$INTERFACE_MODE" == "803" ]; then
@@ -34,13 +34,13 @@ INFORMATION() {
     if [ -e "$CURRENT_ATTACK_FILE" ]; then
         source "$CURRENT_ATTACK_FILE"
     fi
-    
+
     clear
     iwconfig
     echo -e "\033[1;32m$INTERFACE\033[0m: \033[1;36m$INTERFACE_MAC\033[0m \033[1;35m$INTERFACE_MODE_STATUS\033[0m"
     echo -e "\033[1;32m$INTERNET\033[0m: \033[1;36m$INTERNET_MAC\033[0m"
     echo '==============================================================================='
-    echo -e "ATTACK FILE: \033[1;32m$CONFIG_ATTACK\033[0m \033[1;31m$CONFIG_ATTACK_STATUS\033[0m" 
+    echo -e "ATTACK FILE: \033[1;32m$CONFIG_ATTACK\033[0m \033[1;31m$CONFIG_ATTACK_STATUS\033[0m"
     echo
 }
 
@@ -55,10 +55,10 @@ FAKEAP() {
         4 - Stop FakeAP - Restore Network/Firewall [RECOMMENDED]
         99 - Configuration - required to create a FakeAP Custom Mode
         0 - Sair
-        
+
         Choose a option: "
         read FAKEAP_OPTION
-        
+
         case "$FAKEAP_OPTION" in
         1) iptables-save > "$CONFIG_FAKEAP_DIR/wificrack-iptables-save" ;;
         2) $TERMINAL "\"${FUNCTIONPATH}\"/wificrack-5-fakeap_start.sh $INTERFACE ; bash" ;;
@@ -80,10 +80,10 @@ WEP() {
         2 - Fakeauth - Makes a false authentication to create a connection on the target.
         3 - ARP Request - Injects packets into a connection, use with Dump and Fakeauth.
         0 - Quit
-        
+
         Choose a option: "
         read WEP_OPTION
-        
+
         case "$WEP_OPTION" in
         1) $TERMINAL "\"${FUNCTIONPATH}\"/wificrack-6-wep_attack.sh ; bash" ;;
         2) $TERMINAL "\"${FUNCTIONPATH}\"/wificrack-6-fakeauth.sh ; bash" ;;
@@ -102,10 +102,10 @@ WPAWPA2_WPS() {
         1 - WPS Scan - Scan connections with WPS enabled.
         2 - WPS Brute Force - Brute force WPS on network target.
         0 - Sair
-        
+
         Choose a option: "
         read WPAWPA2_WPS_OPTION
-        
+
         case "$WPAWPA2_WPS_OPTION" in
         1) $TERMINAL "\"${FUNCTIONPATH}\"/wificrack-9-wps_scan.sh ; bash" ;;
         2) $TERMINAL "\"${FUNCTIONPATH}\"/wificrack-9-wps_brute_force.sh ; bash" ;;
@@ -123,10 +123,10 @@ WPAWPA2_ATTACK() {
         1 - Capturar Handshake - Quick deauth attack to capture the handshake in Dump.
         2 - Wordlist Attack - Use a wordlist to find the key.
         0 - Sair
-        
+
         Choose a option: "
         read WPAWPA2_ATTACK_OPTION
-        
+
         case "$WPAWPA2_ATTACK_OPTION" in
         1) $TERMINAL "\"${FUNCTIONPATH}\"/wificrack-10-handshake_deauth.sh" ;;
         2) $TERMINAL "\"${FUNCTIONPATH}\"/wificrack-10-wordlist_attack.sh ; bash" ;;
@@ -161,7 +161,7 @@ MENU() {
         else
             CONFIG_ATTACK_STATUS="[INVALID ATTACK FILE]"
         fi
-        
+
         INFORMATION
         echo -ne "
         1 - Change the network interface mode
@@ -178,10 +178,10 @@ MENU() {
         99 - Other settings [DEVELOPMENT]
         0 - Quit
         [ENTER] to Update screen
-        
+
         Choose a option: "
         read OPTION
-        
+
         case "$OPTION" in
         1) "${FUNCTIONPATH}/wificrack-1-change_mode.sh" "$INTERFACE" ;;
         2) $TERMINAL "\"${FUNCTIONPATH}\"/wificrack-2-sniff.sh $INTERFACE ; bash" ;;
@@ -198,7 +198,7 @@ MENU() {
         0) break ;;
         *) echo "INVALID OPTION!!!"
         esac
-        
+
     done
 }
 
@@ -209,7 +209,7 @@ MENU() {
 # Start - Choose Interface
 CHOOSE_INTERFACE
 
-mkdir -p "$CONFIG_DIR" 
+mkdir -p "$CONFIG_DIR"
 
 # Select terminal
 LIST_TERMINAL="gnome-terminal xfce4-terminal xterm konsole"

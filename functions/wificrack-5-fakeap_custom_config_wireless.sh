@@ -31,23 +31,23 @@ while : ; do
     else
         SELECT_FAKEAP_SSID_STATUS=""
     fi
-    
+
     if [ -z "$SELECT_FAKEAP_CHANNEL" ]; then
         SELECT_FAKEAP_CHANNEL_STATUS="[NÃO CONFIGURADO]"
     else
         SELECT_FAKEAP_CHANNEL_STATUS=""
     fi
-    
+
     if [ -z "$SELECT_FAKEAP_MAC" ]; then
         SELECT_FAKEAP_MAC_STATUS="[NÃO CONFIGURADO]"
     else
         SELECT_FAKEAP_MAC_STATUS=""
     fi
-    
+
     if [ -z "$SELECT_SAVE_FILE" ]; then
         SELECT_SAVE_FILE=""
     fi
-    
+
     echo -ne "
         1 - FAKEAP SSID: \033[1;32m$SELECT_FAKEAP_SSID\033[0m \033[1;31m$SELECT_FAKEAP_SSID_STATUS\033[0m
         2 - FAKEAP CHANNEL: \033[1;32m$SELECT_FAKEAP_CHANNEL\033[0m \033[1;31m$SELECT_FAKEAP_CHANNEL_STATUS\033[0m
@@ -55,10 +55,10 @@ while : ; do
         98 - Import victim conf
         99 - Salvar $SELECT_SAVE_FILE
         0 - Sair
-        
+
         Escolha uma das opções: "
     read OPTION
-    
+
     case "$OPTION" in
     1) echo -n "Digite o SSID: " ; read SELECT_FAKEAP_SSID ;;
     2) echo -n "Digite o channel: " ; read SELECT_FAKEAP_CHANNEL ;;
@@ -77,5 +77,5 @@ while : ; do
     0) break ;;
     *) echo "INVALID OPTION!!!"
     esac
-    
+
 done

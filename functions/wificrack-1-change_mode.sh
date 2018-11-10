@@ -8,7 +8,7 @@ source "$CONFIG_FILE"
 INTERFACE="$1"
 
 if [  -e "/sys/class/net/$INTERFACE/type" ]; then
-    INTERFACE_MODE="$(cat /sys/class/net/$INTERFACE/type)" 
+    INTERFACE_MODE="$(cat /sys/class/net/$INTERFACE/type)"
     if [ "$INTERFACE_MODE" == "1" ]; then
         ifconfig $INTERFACE down
         macchanger --random $INTERFACE

@@ -1,7 +1,0 @@
-
-
-mschapv2: Sat Oct 14 03:39:59 2017
-	 username:	teste
-	 challenge:	f8:7f:42:3c:7f:e5:52:34
-	 response:	99:44:8a:19:a5:32:a5:99:0d:c5:77:e0:71:b0:91:51:79:60:c0:86:25:e2:4f:4c
-	 jtr NETNTLM:	teste:$NETNTLM$f87f423c7fe55234$99448a19a532a5990dc577e071b091517960c08625e24f4c

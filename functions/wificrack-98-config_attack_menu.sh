@@ -13,8 +13,8 @@ INFORMATION() {
     if [ -n "$INTERFACE" ]; then
         INTERFACE_MAC="$(cat /sys/class/net/$INTERFACE/address)"
     fi
-    
-    INTERFACE_MODE="$(cat /sys/class/net/$INTERFACE/type)" 
+
+    INTERFACE_MODE="$(cat /sys/class/net/$INTERFACE/type)"
     if [ "$INTERFACE_MODE" == "1" ]; then
         INTERFACE_MODE_STATUS="[MODE MANAGED]"
     elif [ "$INTERFACE_MODE" == "803" ]; then
@@ -25,13 +25,13 @@ INFORMATION() {
     if [ -e "$CURRENT_ATTACK_FILE" ]; then
         source "$CURRENT_ATTACK_FILE"
     fi
-    
+
     clear
     iwconfig
     echo -e "\033[1;32m$INTERFACE\033[0m: \033[1;36m$INTERFACE_MAC\033[0m \033[1;35m$INTERFACE_MODE_STATUS\033[0m"
     echo -e "\033[1;32m$INTERNET\033[0m: \033[1;36m$INTERNET_MAC\033[0m"
     echo '==============================================================================='
-    echo -e "ATTACK FILE: \033[1;32m$CONFIG_ATTACK\033[0m \033[1;31m$CONFIG_ATTACK_STATUS\033[0m" 
+    echo -e "ATTACK FILE: \033[1;32m$CONFIG_ATTACK\033[0m \033[1;31m$CONFIG_ATTACK_STATUS\033[0m"
     echo
 }
 
@@ -63,19 +63,19 @@ CONFIG_ATTACK_MENU() {
         else
             SELECT_ESSID_STATUS=""
         fi
-        
+
         if [ -z "$SELECT_CHANNEL" ]; then
             SELECT_CHANNEL_STATUS="[NÃO CONFIGURADO]"
         else
             SELECT_CHANNEL_STATUS=""
         fi
-        
+
         if [ -z "$SELECT_BSSID" ]; then
             SELECT_BSSID_STATUS="[NÃO CONFIGURADO]"
         else
             SELECT_BSSID_STATUS=""
         fi
-        
+
         if [ -z "$SELECT_STATION" ]; then
             SELECT_STATION_STATUS="[NÃO CONFIGURADO]"
         else
@@ -84,7 +84,7 @@ CONFIG_ATTACK_MENU() {
         if [ -z "$SELECT_SAVE_FILE" ]; then
             SELECT_SAVE_FILE=""
         fi
-        
+
         echo -ne "
             1 - ESSID DA REDE ALVO: \033[1;32m$SELECT_ESSID\033[0m \033[1;31m$SELECT_ESSID_STATUS\033[0m
             2 - CHANNEL DA REDE ALVO: \033[1;32m$SELECT_CHANNEL\033[0m \033[1;31m$SELECT_CHANNEL_STATUS\033[0m
@@ -93,10 +93,10 @@ CONFIG_ATTACK_MENU() {
             98 - Start Scan Wifi
             99 - Salvar $SELECT_SAVE_FILE
             0 - Sair
-            
+
             Escolha uma das opções: "
         read OPTION
-        
+
         case "$OPTION" in
         1) echo -n "Digite o nome da rede alvo: " ; read SELECT_ESSID ;;
         2) echo -n "Digite o channel da rede alvo: " ; read SELECT_CHANNEL ;;
@@ -107,7 +107,7 @@ CONFIG_ATTACK_MENU() {
         0) break ;;
         *) echo "INVALID OPTION!!!"
         esac
-        
+
     done
 }
 
@@ -125,12 +125,12 @@ while : ; do
     2 - Editar arquivo selecionado.
     3 - Criar um arquivo de configuração para ataque.
     0 - Sair
-    
+
     Escolha uma das opções: "
     read CONFIG_ATTACK_MENU_OPTION
-    
+
     case "$CONFIG_ATTACK_MENU_OPTION" in
-    1) 
+    1)
         find "$CONFIG_ATTACK_DIR"/ -maxdepth 1
         echo -n "Digite o nome do arquivo de configuração para ataque: "
         read CONFIG_ATTACK

@@ -51,7 +51,7 @@ while : ; do
     if [ -z "$SELECT_SAVE_FILE" ]; then
         SELECT_SAVE_FILE=""
     fi
-    
+
     echo -ne "
         1 - DHCP SERVER: \033[1;32m$SELECT_DHCP_SERVER\033[0m \033[1;31m$SELECT_DHCP_SERVER_STATUS\033[0m
         2 - DHCP RANGE START: \033[1;32m$SELECT_DHCP_RANGE_START\033[0m \033[1;31m$SELECT_DHCP_RANGE_START_STATUS\033[0m
@@ -59,10 +59,10 @@ while : ; do
         4 - DHCP NETMASK: \033[1;32m$SELECT_DHCP_NETMASK\033[0m \033[1;31m$SELECT_DHCP_NETMASK_STATUS\033[0m
         99 - Salvar $SELECT_SAVE_FILE
         0 - Sair
-        
+
         Escolha uma das opções: "
     read OPTION
-    
+
     case "$OPTION" in
     1) echo -n "Digite o IP Address do servidor DHCP (ex: 192.168.100.1): " ; read SELECT_DHCP_SERVER  ;;
     2) echo -n "Digite o Start IP Address (ex: 192.168.100.50): " ; read SELECT_DHCP_RANGE_START ;;
@@ -73,5 +73,5 @@ while : ; do
     0) break ;;
     *) echo "INVALID OPTION!!!"
     esac
-    
+
 done

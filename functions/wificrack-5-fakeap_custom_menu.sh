@@ -40,10 +40,10 @@ while : ; do
         6 - Edit fake DNS \"${CONFIG_FAKEAP_FILE_FAKEDNS}\"
         7 - Stop FakeAP - Restore Network/Firewall [RECOMMENDED]
         0 - Sair
-        
+
         Escolha uma das opções: "
     read OPTION
-    
+
     case "$OPTION" in
     1) iptables-save > "$CONFIG_FAKEAP_DIR/wificrack-iptables-save" ;;
     2) "${FUNCTIONPATH}"/wificrack-5-fakeap_custom_start.sh ;;
@@ -55,5 +55,5 @@ while : ; do
     0) break ;;
     *) echo "INVALID OPTION!!!"
     esac
-    
+
 done

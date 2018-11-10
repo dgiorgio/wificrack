@@ -34,7 +34,7 @@ if [ -e "$FILE_CAP" ]; then
     echo "Digite a regra das senhas para o brute-force
 Detalhes no link: https://hashcat.net/wiki/doku.php?id=mask_attack
 "
-    
+
     read MASK
     WPACLEAN_CAP_FILE="WPACLEAN-$FILE_CAP"
     HCCAP_FILE="$(echo \"$FILE_CAP\" | sed 's/\.[^.]*$//')"

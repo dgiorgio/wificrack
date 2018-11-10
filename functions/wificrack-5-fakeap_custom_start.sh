@@ -92,4 +92,3 @@ hostapd "$CONFIG_FAKEAP_CUSTOM_DIR/wificrack-hostapd.conf" -B &
 
 # Sniff
 tshark -i "$INTERFACE"  -w "$CONFIG_FAKEAP_DIR"/fakeap-output.pcap -P
-
